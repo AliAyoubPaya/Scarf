@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { SiteContainer } from "@/components/local/site-container";
+
 type NavigationItem = {
   label: string;
   href: string;
@@ -97,8 +99,8 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white font-heading text-[#262521] shadow-[0_1px_0_rgba(35,33,29,0.09)] [&_a]:focus-visible:outline-none [&_a]:focus-visible:ring-1 [&_a]:focus-visible:ring-[#262521] [&_a]:focus-visible:ring-offset-2 [&_button]:cursor-pointer">
-      <div className="border-b border-[#e9e6e0] bg-[#f6f4f0] px-4 text-[0.72rem] font-medium tracking-[0.08em] text-[#4d4a44] sm:px-8">
-        <div className="mx-auto flex h-8 max-w-[1480px] items-center justify-center sm:h-9 sm:justify-between">
+      <div className="border-b border-[#e9e6e0] bg-[#f6f4f0] text-[0.72rem] font-medium tracking-[0.08em] text-[#4d4a44]">
+        <SiteContainer className="flex h-8 items-center justify-center sm:h-9 sm:justify-between">
           <p className="font-paragraph text-[0.72rem] tracking-[0.035em]">
             <span className="sm:hidden">Free delivery over Rs. 5,000</span>
             <span className="hidden sm:inline">Complimentary delivery on orders over Rs. 5,000</span>
@@ -107,10 +109,10 @@ export function SiteHeader() {
             Pakistan · PKR
             <ChevronDown aria-hidden="true" className="size-3" strokeWidth={1.5} />
           </p>
-        </div>
+        </SiteContainer>
       </div>
 
-      <div className="mx-auto grid h-[4.65rem] max-w-[1480px] grid-cols-[1fr_auto_1fr] items-center px-3 sm:h-20 sm:px-6 lg:px-10 xl:px-12">
+      <SiteContainer className="grid h-[4.65rem] grid-cols-[1fr_auto_1fr] items-center px-3 sm:h-20 sm:px-6 lg:px-10">
         <div className="flex items-center justify-start lg:hidden">
           <button
             type="button"
@@ -199,30 +201,38 @@ export function SiteHeader() {
             </span>
           </Link>
         </div>
-      </div>
+      </SiteContainer>
 
       <div
         className={`absolute inset-x-0 top-full overflow-hidden border-t border-[#ece9e4] bg-white shadow-[0_12px_30px_rgba(38,37,33,0.08)] transition-[max-height,opacity] duration-300 ${
           searchOpen ? "max-h-28 opacity-100" : "pointer-events-none max-h-0 opacity-0"
         }`}
       >
-        <form action="/search" className="mx-auto flex h-24 max-w-3xl items-center px-5 sm:px-8" role="search">
-          <label htmlFor="site-search" className="sr-only">
-            Search scarves and accessories
-          </label>
-          <div className="flex w-full items-center border-b border-[#817d75] pb-2 [&_svg]:shrink-0">
-            <Search aria-hidden="true" className="mr-3 size-5 text-[#625f59]" strokeWidth={1.35} />
-            <input
-              id="site-search"
-              name="q"
-              type="search"
-              autoComplete="off"
-              placeholder="Search scarves and accessories"
-              className="h-10 min-w-0 flex-1 bg-transparent font-paragraph text-base text-[#262521] outline-none placeholder:text-[#88847d]"
-            />
-            <span className="hidden font-paragraph text-xs text-[#8a867f] sm:block">Press enter to search</span>
-          </div>
-        </form>
+        <SiteContainer>
+          <form action="/search" className="flex h-24 items-center" role="search">
+            <label htmlFor="site-search" className="sr-only">
+              Search scarves and accessories
+            </label>
+            <div className="flex w-full items-center border-b border-[#817d75] pb-2 [&_svg]:shrink-0">
+              <Search
+                aria-hidden="true"
+                className="mr-3 size-5 text-[#625f59]"
+                strokeWidth={1.35}
+              />
+              <input
+                id="site-search"
+                name="q"
+                type="search"
+                autoComplete="off"
+                placeholder="Search scarves and accessories"
+                className="h-10 min-w-0 flex-1 bg-transparent font-paragraph text-base text-[#262521] outline-none placeholder:text-[#88847d]"
+              />
+              <span className="hidden font-paragraph text-xs text-[#8a867f] sm:block">
+                Press enter to search
+              </span>
+            </div>
+          </form>
+        </SiteContainer>
       </div>
 
       {menuOpen ? (

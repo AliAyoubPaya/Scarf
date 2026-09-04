@@ -164,4 +164,92 @@ export const featuredProducts: CatalogProduct[] = [
     colorCount: 5,
     tabs: ["occasion"],
   },
+  {
+    id: "catalog-07",
+    source: { provider: "woocommerce", externalId: 2107 },
+    slug: "terracotta-botanical-silk-hijab",
+    name: "Terracotta Botanical Silk Hijab",
+    color: "Burnished Clay",
+    price: 3650,
+    currency: "PKR",
+    images: [
+      {
+        src: "/images/products/terracotta-botanical-silk.png",
+        alt: "Woman wearing a terracotta botanical silk hijab",
+      },
+      {
+        src: "/images/products/terracotta-botanical-silk-alt.png",
+        alt: "Alternate view of a terracotta botanical silk hijab",
+      },
+    ],
+    stockStatus: "in-stock",
+    colorCount: 4,
+    tabs: ["best-sellers", "occasion"],
+  },
+  {
+    id: "catalog-08",
+    source: { provider: "woocommerce", externalId: 2108 },
+    slug: "cocoa-cloud-modal-hijab",
+    name: "Cocoa Cloud Modal Hijab",
+    color: "Cocoa Brown",
+    price: 2950,
+    currency: "PKR",
+    images: [
+      {
+        src: "/images/products/cocoa-modal-hijab.png",
+        alt: "Woman wearing a cocoa brown modal hijab",
+      },
+      {
+        src: "/images/products/cocoa-modal-hijab-alt.png",
+        alt: "Alternate view of a cocoa brown modal hijab",
+      },
+    ],
+    stockStatus: "in-stock",
+    colorCount: 11,
+    tabs: ["best-sellers"],
+  },
+  {
+    id: "catalog-09",
+    source: { provider: "woocommerce", externalId: 2109 },
+    slug: "noir-crinkle-chiffon-hijab",
+    name: "Noir Crinkle Chiffon Hijab",
+    color: "Deep Black",
+    price: 2550,
+    currency: "PKR",
+    images: [
+      {
+        src: "/images/products/black-crinkle-chiffon.png",
+        alt: "Woman wearing a black crinkle chiffon hijab",
+      },
+      {
+        src: "/images/products/black-crinkle-chiffon-alt.png",
+        alt: "Alternate view of a black crinkle chiffon hijab",
+      },
+    ],
+    stockStatus: "sold-out",
+    colorCount: 7,
+    tabs: ["best-sellers", "occasion"],
+  },
+  {
+    id: "catalog-10",
+    source: { provider: "woocommerce", externalId: 2110 },
+    slug: "marble-ink-georgette-hijab",
+    name: "Marble Ink Georgette Hijab",
+    color: "Ivory Charcoal",
+    price: 3350,
+    currency: "PKR",
+    images: [
+      {
+        src: "/images/products/ivory-charcoal-georgette.png",
+        alt: "Woman wearing an ivory and charcoal georgette hijab",
+      },
+      {
+        src: "/images/products/ivory-charcoal-georgette-alt.png",
+        alt: "Alternate view of an ivory and charcoal georgette hijab",
+      },
+    ],
+    stockStatus: "in-stock",
+    colorCount: 3,
+    tabs: ["best-sellers", "occasion"],
+  },
 ];
