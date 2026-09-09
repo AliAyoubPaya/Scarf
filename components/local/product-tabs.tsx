@@ -71,7 +71,7 @@ export function ProductTabs({ tabs, products }: ProductTabsProps) {
           </h2>
           <span
             aria-hidden="true"
-            className="mx-auto mt-4 block h-0.5 w-8 bg-[#d6d3cc]"
+            className="mx-auto mt-4 block h-0.5 w-8 bg-brand-gold"
           />
         </header>
 
@@ -91,8 +91,8 @@ export function ProductTabs({ tabs, products }: ProductTabsProps) {
               tabIndex={activeTab === tab.id ? 0 : -1}
               className={
                 activeTab === tab.id
-                  ? "bg-[#f1f0ed] text-[#24231f]"
-                  : "bg-transparent text-[#5e5b53] hover:bg-[#f7f6f3] hover:text-[#24231f]"
+                  ? "bg-brand-gold-soft text-brand-gold-ink ring-1 ring-inset ring-brand-gold-line"
+                  : "bg-transparent text-[#5e5b53] hover:bg-brand-gold-soft hover:text-brand-gold-ink"
               }
               onClick={() => selectTab(tab.id)}
               onKeyDown={(event) => moveTabFocus(event, index)}
@@ -126,7 +126,7 @@ export function ProductTabs({ tabs, products }: ProductTabsProps) {
             type="button"
             aria-label="Show previous products"
             onClick={() => scrollProducts(-1)}
-            className="absolute left-2 top-[38%] z-40 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/92 text-[#2d2c27] shadow-[0_5px_24px_rgba(39,37,31,0.12)] backdrop-blur-sm transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3f4937] sm:left-3 sm:size-11"
+            className="absolute left-2 top-[38%] z-40 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/92 text-[#2d2c27] shadow-[0_5px_24px_rgba(39,37,31,0.12)] backdrop-blur-sm transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold-ink sm:left-3 sm:size-11"
           >
             <ChevronLeft aria-hidden="true" className="size-4" strokeWidth={1.5} />
           </button>
@@ -134,7 +134,7 @@ export function ProductTabs({ tabs, products }: ProductTabsProps) {
             type="button"
             aria-label="Show next products"
             onClick={() => scrollProducts(1)}
-            className="absolute right-2 top-[38%] z-40 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/92 text-[#2d2c27] shadow-[0_5px_24px_rgba(39,37,31,0.12)] backdrop-blur-sm transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3f4937] sm:right-3 sm:size-11"
+            className="absolute right-2 top-[38%] z-40 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/92 text-[#2d2c27] shadow-[0_5px_24px_rgba(39,37,31,0.12)] backdrop-blur-sm transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold-ink sm:right-3 sm:size-11"
           >
             <ChevronRight aria-hidden="true" className="size-4" strokeWidth={1.5} />
           </button>

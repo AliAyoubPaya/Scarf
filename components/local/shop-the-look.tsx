@@ -38,7 +38,7 @@ export function ShopTheLook({ products }: ShopTheLookProps) {
       className="grid overflow-hidden bg-[#f5f5f3] text-[#26251f] lg:min-h-[760px] lg:grid-cols-2 xl:min-h-[820px]"
       aria-labelledby="shop-the-look-title"
     >
-      <div className="flex items-center justify-center px-4 py-16 sm:px-8 sm:py-20 lg:px-12 lg:py-24">
+      <div className="flex items-center justify-center px-[var(--site-gutter)] py-16 sm:py-20 lg:py-24">
         <div className="w-full max-w-[520px]">
           <header className="text-center">
             <h2
@@ -49,7 +49,7 @@ export function ShopTheLook({ products }: ShopTheLookProps) {
             </h2>
             <span
               aria-hidden="true"
-              className="mx-auto mt-4 block h-0.5 w-8 bg-[#cfcec9]"
+              className="mx-auto mt-4 block h-0.5 w-8 bg-brand-gold"
             />
           </header>
 
@@ -61,7 +61,7 @@ export function ShopTheLook({ products }: ShopTheLookProps) {
             >
               <Link
                 href={`/products/${activeProduct.slug}`}
-                className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#3f4937]"
+                className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-gold-ink"
               >
                 <div className="relative aspect-[9/10] overflow-hidden bg-[#f1f0ed]">
                   <Image
@@ -87,7 +87,7 @@ export function ShopTheLook({ products }: ShopTheLookProps) {
               type="button"
               aria-label="Show previous look product"
               onClick={selectPreviousProduct}
-              className="absolute left-1 top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#292823] shadow-[0_5px_20px_rgba(35,31,25,0.08)] transition hover:bg-[#292823] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#3f4937] sm:left-3"
+              className="absolute left-1 top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#292823] shadow-[0_5px_20px_rgba(35,31,25,0.08)] transition hover:bg-brand-gold-ink hover:text-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brand-gold-ink sm:left-3"
             >
               <ChevronLeft aria-hidden="true" className="size-4" strokeWidth={1.5} />
             </button>
@@ -95,7 +95,7 @@ export function ShopTheLook({ products }: ShopTheLookProps) {
               type="button"
               aria-label="Show next look product"
               onClick={selectNextProduct}
-              className="absolute right-1 top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#292823] shadow-[0_5px_20px_rgba(35,31,25,0.08)] transition hover:bg-[#292823] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#3f4937] sm:right-3"
+              className="absolute right-1 top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#292823] shadow-[0_5px_20px_rgba(35,31,25,0.08)] transition hover:bg-brand-gold-ink hover:text-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brand-gold-ink sm:right-3"
             >
               <ChevronRight aria-hidden="true" className="size-4" strokeWidth={1.5} />
             </button>
@@ -115,13 +115,13 @@ export function ShopTheLook({ products }: ShopTheLookProps) {
                 aria-controls="shop-the-look-product"
                 aria-label={`Show ${product.name}`}
                 onClick={() => setActiveProductIndex(index)}
-                className="flex size-4 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3f4937]"
+                className="flex size-4 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold-ink"
               >
                 <span
                   aria-hidden="true"
                   className={`rounded-full transition-all ${
                     index === activeProductIndex
-                      ? "size-1.5 bg-[#292823]"
+                      ? "size-1.5 bg-brand-gold-ink"
                       : "size-1 bg-[#bdbab3]"
                   }`}
                 />
@@ -165,7 +165,7 @@ export function ShopTheLook({ products }: ShopTheLookProps) {
               <span
                 aria-hidden="true"
                 className={`relative flex items-center justify-center rounded-full text-[#34261d] transition-all ${
-                  isActive ? "size-4" : "size-1.5 bg-[#34261d]"
+                  isActive ? "size-4 text-brand-gold-ink" : "size-1.5 bg-[#34261d]"
                 }`}
               >
                 {isActive ? <X className="size-3" strokeWidth={1.6} /> : null}

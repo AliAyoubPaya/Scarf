@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import type { CatalogProduct } from "@/lib/catalog/products";
 
@@ -10,6 +11,7 @@ type CatalogProductCardProps = {
   product: CatalogProduct;
   compact?: boolean;
   imageSizes?: string;
+  onQuickView?: () => void;
 };
 
 function formatPrice(price: number) {
@@ -19,19 +21,12 @@ function formatPrice(price: number) {
 export function CatalogProductCard({
   product,
   compact = false,
+  onQuickView,
   imageSizes = "(max-width: 639px) 50vw, (max-width: 1023px) 33vw, 25vw",
 }: CatalogProductCardProps) {
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [currentImage, setCurrentImage] = useState(0);
-  const [isAdded, setIsAdded] = useState(false);
-  const quickAddTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(
-    () => () => {
-      if (quickAddTimerRef.current) clearTimeout(quickAddTimerRef.current);
-    },
-    [],
-  );
+  const router = useRouter();
 
   const stopPreview = () => {
     setIsPreviewing(false);
@@ -39,19 +34,7 @@ export function CatalogProductCard({
   };
 
   const handleQuickAdd = () => {
-    setIsAdded(true);
-    if (quickAddTimerRef.current) clearTimeout(quickAddTimerRef.current);
-
-    window.dispatchEvent(
-      new CustomEvent("scarf:quick-add", {
-        detail: {
-          productId: product.id,
-          wooCommerceId: product.source.externalId,
-        },
-      }),
-    );
-
-    quickAddTimerRef.current = setTimeout(() => setIsAdded(false), 1800);
+    router.push(`/products/${product.slug}`);
   };
 
   return (
@@ -71,7 +54,7 @@ export function CatalogProductCard({
       >
         <Link
           href={`/products/${product.slug}`}
-          className="absolute inset-0 z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-[#3f4937]"
+          className="absolute inset-0 z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-brand-gold-ink"
           aria-label={`View ${product.name}`}
         >
           {product.images.map((image, index) => (
@@ -120,22 +103,22 @@ export function CatalogProductCard({
         ) : (
           <button
             type="button"
-            onClick={handleQuickAdd}
-            className={`absolute inset-x-3 bottom-3 z-30 flex translate-y-0 items-center justify-center bg-white px-4 font-heading font-medium uppercase tracking-[0.13em] text-[#292823] shadow-[0_6px_24px_rgba(35,32,25,0.12)] transition duration-300 hover:bg-[#272620] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3f4937] md:translate-y-[calc(100%+0.75rem)] md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-focus-within:translate-y-0 md:group-focus-within:opacity-100 ${
+            onClick={onQuickView ?? handleQuickAdd}
+            className={`absolute inset-x-3 bottom-3 z-30 flex translate-y-0 items-center justify-center bg-white px-4 font-heading font-medium uppercase tracking-[0.13em] text-[#292823] shadow-[0_6px_24px_rgba(35,32,25,0.12)] transition duration-300 hover:bg-brand-gold-ink hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold-ink md:translate-y-[calc(100%+0.75rem)] md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-focus-within:translate-y-0 md:group-focus-within:opacity-100 ${
               compact
                 ? "min-h-10 text-[0.62rem] sm:min-h-11 sm:text-[0.66rem]"
                 : "min-h-12 text-[0.7rem]"
             }`}
-            aria-label={`Quick add ${product.name} to bag`}
+            aria-label={onQuickView ? `Quick view ${product.name}` : `Explore ${product.name}`}
           >
-            {isAdded ? "Added to bag" : "Quick add"}
+            {onQuickView ? "Quick view" : "Explore scarf"}
           </button>
         )}
       </div>
 
       <Link
         href={`/products/${product.slug}`}
-        className={`block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#3f4937] [&_p]:font-paragraph ${
+        className={`block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-gold-ink [&_p]:font-paragraph ${
           compact ? "pt-3 sm:pt-3.5" : "pt-4 sm:pt-[1.1rem]"
         }`}
       >

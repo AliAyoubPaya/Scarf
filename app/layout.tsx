@@ -14,7 +14,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "SCARF — Scarves for every story",
+  title: "HS by Saman — Scarves for every story",
   description: "Modern scarves and modest essentials for women and girls.",
 };
 

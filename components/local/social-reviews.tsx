@@ -233,7 +233,7 @@ export function SocialReviews({ reviews }: SocialReviewsProps) {
           </h2>
           <span
             aria-hidden="true"
-            className="mx-auto mt-4 block h-0.5 w-8 bg-[#d6d3cc]"
+            className="mx-auto mt-4 block h-0.5 w-8 bg-brand-gold"
           />
         </header>
 
@@ -285,7 +285,7 @@ export function SocialReviews({ reviews }: SocialReviewsProps) {
             type="button"
             aria-label="Scroll reviews left"
             onClick={() => scrollRail(-1)}
-            className="absolute left-2 top-1/2 z-20 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#292823] shadow-[0_6px_22px_rgba(31,28,23,0.15)] transition hover:bg-[#292823] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#3f4937] sm:flex"
+            className="absolute left-2 top-1/2 z-20 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#292823] shadow-[0_6px_22px_rgba(31,28,23,0.15)] transition hover:bg-brand-gold-ink hover:text-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brand-gold-ink sm:flex"
           >
             <ChevronLeft aria-hidden="true" className="size-5" strokeWidth={1.5} />
           </button>
@@ -293,7 +293,7 @@ export function SocialReviews({ reviews }: SocialReviewsProps) {
             type="button"
             aria-label="Scroll reviews right"
             onClick={() => scrollRail(1)}
-            className="absolute right-2 top-1/2 z-20 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#292823] shadow-[0_6px_22px_rgba(31,28,23,0.15)] transition hover:bg-[#292823] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#3f4937] sm:flex"
+            className="absolute right-2 top-1/2 z-20 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#292823] shadow-[0_6px_22px_rgba(31,28,23,0.15)] transition hover:bg-brand-gold-ink hover:text-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brand-gold-ink sm:flex"
           >
             <ChevronRight aria-hidden="true" className="size-5" strokeWidth={1.5} />
           </button>
@@ -381,7 +381,7 @@ export function SocialReviews({ reviews }: SocialReviewsProps) {
                 href={activeReview.postUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex size-10 shrink-0 items-center justify-center border border-[#d8d5ce] transition hover:bg-[#272620] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3f4937]"
+                className="flex size-10 shrink-0 items-center justify-center border border-[#d8d5ce] transition hover:bg-brand-gold-ink hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold-ink"
                 aria-label={`View original post on ${activeReview.platform}`}
               >
                 <ExternalLink aria-hidden="true" className="size-4" strokeWidth={1.5} />

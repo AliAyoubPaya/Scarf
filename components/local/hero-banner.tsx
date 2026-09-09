@@ -50,9 +50,9 @@ export function HeroBanner() {
 
       <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(249,247,242,0.99)_0%,rgba(249,247,242,0.94)_32%,rgba(249,247,242,0.76)_52%,rgba(249,247,242,0.08)_78%)] sm:bg-[linear-gradient(90deg,rgba(246,243,237,0.92)_0%,rgba(246,243,237,0.72)_28%,rgba(246,243,237,0.12)_56%,transparent_72%)]" />
 
-      <SiteContainer className="relative flex h-full items-end px-5 pb-10 sm:items-center sm:px-8 sm:pb-0 lg:px-10">
+      <SiteContainer width="full" className="relative flex h-full items-end pb-10 sm:items-center sm:pb-0">
         <div className="max-w-[21rem] text-[#24231f] sm:max-w-[31rem] [&_a]:inline-flex [&_a]:min-h-12 [&_a]:items-center [&_a]:justify-center [&_a]:gap-3 [&_a]:px-6 [&_a]:font-heading [&_a]:text-[0.72rem] [&_a]:font-medium [&_a]:uppercase [&_a]:tracking-[0.14em] [&_a]:transition-colors">
-          <p className="mb-3 font-heading text-[0.68rem] font-medium uppercase tracking-[0.2em] text-[#5d6250] sm:mb-5 sm:text-xs">
+          <p className="mb-3 font-heading text-[0.68rem] font-medium uppercase tracking-[0.2em] text-brand-gold-ink sm:mb-5 sm:text-xs">
             The Botanical Edit · 2026
           </p>
           <h1
@@ -68,7 +68,7 @@ export function HeroBanner() {
           <div className="mt-6 flex flex-wrap gap-3 sm:mt-8">
             <Link
               href="/collections/new-in"
-              className="group bg-[#272620] text-white hover:bg-[#aa302b]"
+              className="group bg-brand-gold-ink text-white hover:bg-[#604c22]"
             >
               Shop new arrivals
               <ArrowUpRight
@@ -79,7 +79,7 @@ export function HeroBanner() {
             </Link>
             <Link
               href="/collections/modal"
-              className="border border-[#393832] bg-white/15 text-[#292822] backdrop-blur-sm hover:bg-white/60"
+              className="border border-brand-gold-ink bg-white/15 text-[#292822] backdrop-blur-sm hover:bg-white/60"
             >
               Explore modal
             </Link>

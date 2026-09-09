@@ -6,6 +6,10 @@ export type CatalogTab = {
 };
 
 export type CatalogProduct = {
+  /** Explicit sibling-product family, never inferred from fabric or title. */
+  colorGroup?: string;
+  variants?: CatalogVariant[];
+  commerce?: { synced: boolean; purchasable: boolean; type: "simple" | "variable" };
   id: string;
   source: {
     provider: "woocommerce";
@@ -23,6 +27,20 @@ export type CatalogProduct = {
   stockStatus: "in-stock" | "sold-out";
   colorCount: number;
   tabs: ProductTabId[];
+};
+
+export type CatalogVariant = {
+  backorder?: boolean;
+  id: string;
+  wooId: number | null;
+  color: string;
+  label: string;
+  swatch?: string;
+  price: number;
+  images: CatalogProduct["images"];
+  stockStatus: CatalogProduct["stockStatus"];
+  purchasable: boolean;
+  attributes: { name: string; option: string }[];
 };
 
 export const catalogTabs: CatalogTab[] = [

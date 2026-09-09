@@ -24,7 +24,7 @@ export function BestSellersGrid({ products }: BestSellersGridProps) {
           </h2>
           <span
             aria-hidden="true"
-            className="mx-auto mt-4 block h-0.5 w-8 bg-[#d6d3cc]"
+            className="mx-auto mt-4 block h-0.5 w-8 bg-brand-gold"
           />
         </header>
 
@@ -42,7 +42,7 @@ export function BestSellersGrid({ products }: BestSellersGridProps) {
         <div className="mt-12 flex justify-center sm:mt-14">
           <Link
             href="/collections/best-sellers"
-            className="inline-flex min-h-11 items-center justify-center border border-[#383731] px-7 font-heading text-[0.68rem] font-medium uppercase tracking-[0.14em] text-[#292823] transition-colors hover:bg-[#272620] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#3f4937]"
+            className="inline-flex min-h-11 items-center justify-center border border-brand-gold px-7 font-heading text-[0.68rem] font-medium uppercase tracking-[0.14em] text-[#292823] transition-colors hover:bg-brand-gold-ink hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-gold-ink"
           >
             View all
           </Link>

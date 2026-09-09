@@ -2,13 +2,17 @@ import type { ComponentPropsWithoutRef } from "react";
 
 import { cn } from "@/lib/utils";
 
-type SiteContainerProps = ComponentPropsWithoutRef<"div">;
+type SiteContainerProps = ComponentPropsWithoutRef<"div"> & {
+  width?: "contained" | "full";
+};
 
-export function SiteContainer({ className, ...props }: SiteContainerProps) {
+export function SiteContainer({ width = "contained", className, ...props }: SiteContainerProps) {
   return (
     <div
+      data-site-width={width}
       className={cn(
-        "mx-auto w-full max-w-[1280px] px-4 sm:px-7 lg:px-10",
+        "mx-auto w-full min-w-0 px-[var(--site-gutter)]",
+        width === "contained" ? "max-w-[var(--site-content-max)]" : "max-w-none",
         className,
       )}
       {...props}

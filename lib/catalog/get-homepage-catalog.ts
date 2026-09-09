@@ -1,14 +1,14 @@
 import "server-only";
 
-import { catalogTabs, featuredProducts } from "@/lib/catalog/products";
+import { catalogTabs } from "@/lib/catalog/products";
+import { getCatalogProducts } from "@/lib/catalog/get-collection-catalog";
 
 /**
- * Server-only catalog boundary. Replace the in-memory return with a MongoDB
- * repository query when the WooCommerce sync worker is connected.
+ * Homepage shares the same MongoDB/explicit-preview repository as collection and product pages.
  */
 export async function getHomepageCatalog() {
   return {
     tabs: catalogTabs,
-    products: featuredProducts,
+    products: await getCatalogProducts(),
   };
 }
