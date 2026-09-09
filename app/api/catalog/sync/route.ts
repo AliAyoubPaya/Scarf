@@ -15,5 +15,10 @@ export async function POST(request: Request) {
     const page = body.page ?? 1;
     if (!Number.isSafeInteger(page) || page < 1 || page > 10000) return Response.json({ error: "Invalid page" }, { status: 400 });
     return Response.json(await syncPage(page));
-  } catch { return Response.json({ error: "Sync failed. Check the server configuration and WooCommerce connection, then retry this batch." }, { status: 502 }); }
+  } catch (error) {
+    const message = error instanceof Error && /^(WooCommerce|MongoDB|This storefront|Product \d+:)/.test(error.message)
+      ? error.message
+      : "Sync failed. Check the server configuration and WooCommerce connection, then retry this batch.";
+    return Response.json({ error: message }, { status: 502 });
+  }
 }

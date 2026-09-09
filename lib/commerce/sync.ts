@@ -9,7 +9,11 @@ async function wooRead(path: string) {
   const key = process.env.WOOCOMMERCE_CONSUMER_KEY;
   const secret = process.env.WOOCOMMERCE_CONSUMER_SECRET;
   if (!key || !secret) throw new Error("WooCommerce sync credentials are missing.");
-  return fetch(`${wooBaseUrl()}/wp-json/wc/v3/${path}`, { headers: { Authorization: `Basic ${Buffer.from(`${key}:${secret}`).toString("base64")}` }, cache: "no-store", redirect: "error", signal: AbortSignal.timeout(15000) });
+  try {
+    return await fetch(`${wooBaseUrl()}/wp-json/wc/v3/${path}`, { headers: { Authorization: `Basic ${Buffer.from(`${key}:${secret}`).toString("base64")}` }, cache: "no-store", redirect: "error", signal: AbortSignal.timeout(15000) });
+  } catch {
+    throw new Error("WooCommerce request failed.");
+  }
 }
 export async function syncProduct(id: number) {
   const fetchedAt = new Date();
@@ -31,16 +35,21 @@ export async function syncProduct(id: number) {
     }
     catalog = normalizeProduct(product, variations);
   }
-  const collection = (await database()).collection<StoredProduct>("products");
-  // Atomic snapshot replacement. An earlier/slower fetch cannot overwrite a newer sync.
-  await collection.updateOne({ _id: id }, [{ $replaceWith: { $cond: [{ $lte: [{ $ifNull: ["$fetchedAt", new Date(0)] }, fetchedAt] }, { $literal: { _id: id, catalog, fetchedAt } }, "$$ROOT"] } }], { upsert: true });
+  try {
+    const collection = (await database()).collection<StoredProduct>("products");
+    // Atomic snapshot replacement. An earlier/slower fetch cannot overwrite a newer sync.
+    await collection.updateOne({ _id: id }, [{ $replaceWith: { $cond: [{ $lte: [{ $ifNull: ["$fetchedAt", new Date(0)] }, fetchedAt] }, { $literal: { _id: id, catalog, fetchedAt } }, "$$ROOT"] } }], { upsert: true });
+  } catch {
+    throw new Error("MongoDB snapshot write failed.");
+  }
   return { id, published: catalog !== null };
 }
 export async function syncPage(page: number) {
   const currency = await wooRead("settings/general/woocommerce_currency");
-  if (!currency.ok || (await currency.json()).value !== "PKR") throw new Error("This storefront requires the WooCommerce currency to be PKR.");
+  if (!currency.ok) throw new Error(`WooCommerce currency read failed (HTTP ${currency.status}).`);
+  if ((await currency.json()).value !== "PKR") throw new Error("This storefront requires the WooCommerce currency to be PKR.");
   const response = await wooRead(`products?per_page=10&page=${page}&orderby=id&order=asc`);
-  if (!response.ok) throw new Error("WooCommerce catalog sync failed.");
+  if (!response.ok) throw new Error(`WooCommerce catalog sync failed (HTTP ${response.status}).`);
   const products = await response.json() as WooProduct[];
   const results = [];
   for (const product of products) results.push(await syncProduct(product.id));
