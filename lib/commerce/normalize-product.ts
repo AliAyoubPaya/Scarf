@@ -5,6 +5,7 @@ type WooImage = { src: string; alt?: string };
 type Attribute = { name: string; option?: string; options?: string[] };
 export type WooProduct = {
   id: number; name: string; slug: string; type: string; status: string;
+  description?: string; short_description?: string;
   catalog_visibility?: string; price: string; stock_status: string; purchasable?: boolean;
   images: WooImage[]; attributes: Attribute[]; categories: { slug: string }[];
   tags: { slug: string }[]; date_modified_gmt: string;
@@ -64,5 +65,5 @@ export function normalizeProduct(product: WooProduct, variations: WooVariation[]
   const tabs = (["new-in", "best-sellers", "occasion"] as ProductTabId[]).filter((tab) => slugs.includes(tab));
   const shadeNames: Record<string, string> = { black: "Black", ivory: "Ivory", white: "Ivory", navy: "Blue", blue: "Blue", pink: "Pink", rose: "Pink", green: "Green", sage: "Green", pistachio: "Green", brown: "Brown", cocoa: "Brown", beige: "Brown" };
   const shadeKey = Object.keys(swatchColors).find((shade) => selected.color.toLowerCase().includes(shade));
-  return { id: `woo-${product.id}`, source: { provider: "woocommerce", externalId: product.id }, slug: product.slug, name, colorGroup, color: selected.color, price: selected.price, currency: "PKR", images: parentImages.length ? parentImages : selected.images, stockStatus: variants.some((v) => v.purchasable) ? "in-stock" : "sold-out", colorCount: new Set(variants.map((v) => v.color)).size, tabs, fabric, shade: shadeKey ? shadeNames[shadeKey] : "Printed", variants, commerce: { synced: true, purchasable: variants.some((v) => v.purchasable), type: product.type as "simple" | "variable" } };
+  return { id: `woo-${product.id}`, source: { provider: "woocommerce", externalId: product.id }, slug: product.slug, name, description: plainText(product.description || ""), shortDescription: plainText(product.short_description || ""), colorGroup, color: selected.color, price: selected.price, currency: "PKR", images: parentImages.length ? parentImages : selected.images, stockStatus: variants.some((v) => v.purchasable) ? "in-stock" : "sold-out", colorCount: new Set(variants.map((v) => v.color)).size, tabs, fabric, shade: shadeKey ? shadeNames[shadeKey] : "Printed", variants, commerce: { synced: true, purchasable: variants.some((v) => v.purchasable), type: product.type as "simple" | "variable" } };
 }

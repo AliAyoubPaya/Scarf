@@ -1,5 +1,5 @@
 import { equalSecret } from "@/lib/commerce/security";
-import { syncPage, syncProduct } from "@/lib/commerce/sync";
+import { approveProductRemoval, syncPage, syncProduct } from "@/lib/commerce/sync";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -18,6 +18,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     if (body.productId !== undefined) {
       if (!Number.isSafeInteger(body.productId) || body.productId < 1) return Response.json({ error: "Invalid product ID" }, { status: 400 });
+      if (body.approveRemoval === true) return Response.json(await approveProductRemoval(body.productId));
       return Response.json(await syncProduct(body.productId));
     }
     const page = body.page ?? 1;

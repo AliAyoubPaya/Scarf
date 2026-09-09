@@ -16,14 +16,9 @@ export default async function Home() {
   const bestSellers = catalog.products
     .filter((product) => product.tabs.includes("best-sellers"))
     .slice(0, 8);
-  const shopTheLookProducts = [
-    "cocoa-cloud-modal-hijab",
-    "terracotta-botanical-silk-hijab",
-    "marble-ink-georgette-hijab",
-  ].flatMap((slug) => {
-    const product = catalog.products.find((item) => item.slug === slug);
-    return product ? [product] : [];
-  });
+  const shopTheLookProducts = catalog.products
+    .filter((product) => product.images.length > 0)
+    .slice(0, 3);
 
   return (
     <div className="min-h-screen bg-[#fbfaf8]">

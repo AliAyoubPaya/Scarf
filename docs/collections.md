@@ -6,7 +6,7 @@ Sections/components live in `components/local/shop/`: collection hero/navigation
 
 `lib/catalog/get-collection-catalog.ts` is the shared server-only MongoDB/explicit-preview repository. See `docs/commerce-setup.md` for modes, provisioning and WooCommerce sync. No browser product-list requests go to WooCommerce. Production stock, prices and material classifications come from synced snapshots.
 
-Filters use OR within fabric/colour groups and AND across groups. Price bands meet at Rs. 3,000 without overlap. URL query parameters preserve filters/sorting through refresh and browser back/forward. Results, active chips, reset and empty states update locally. All matching fixture products are shown; add server-side pagination when the MongoDB catalog grows.
+Filters use OR within fabric/colour groups and AND across groups. Price bands meet at Rs. 3,000 without overlap. URL query parameters preserve filters/sorting through refresh and browser back/forward. Results, active chips, reset and empty states update locally. All matching MongoDB products are shown; add server-side pagination when the live catalog grows.
 
 Collection image/title links open product pages. The separate Quick view button opens the lightweight dialog; it does not report fake cart success. Product pages contain swatches and the gated WooCommerce cart/checkout actions.
 

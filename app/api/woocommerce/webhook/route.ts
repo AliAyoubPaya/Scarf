@@ -14,7 +14,8 @@ export async function POST(request: Request) {
     const payload = JSON.parse(raw);
     const id = payload.parent_id || payload.id;
     if (!Number.isSafeInteger(id) || id < 1) return Response.json({ error: "Invalid product" }, { status: 400 });
-    // Read canonical state even for delete/replayed deliveries; never trust webhook price data.
+    // Missing Woo products are marked deletion-pending. Their snapshots stay
+    // visible until an authenticated admin explicitly approves removal.
     return Response.json(await syncProduct(id));
   } catch { return Response.json({ error: "Sync failed; delivery can be retried." }, { status: 503 }); }
 }

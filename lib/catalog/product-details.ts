@@ -9,7 +9,7 @@ const fabricStories: Record<Fabric, string> = {
   Georgette: "Give your outfit a little more expression. Style with a pared-back palette to let the scarf take centre stage, or layer with complementary tones.",
 };
 
-export function productStory(product: CollectionProduct) { return fabricStories[product.fabric]; }
+export function productStory(product: CollectionProduct) { return product.description || product.shortDescription || fabricStories[product.fabric]; }
 export function relatedProducts(product: CollectionProduct, catalog: CollectionProduct[]) {
   return catalog.filter((item) => item.id !== product.id)
     .sort((a, b) => Number(b.fabric === product.fabric) - Number(a.fabric === product.fabric))

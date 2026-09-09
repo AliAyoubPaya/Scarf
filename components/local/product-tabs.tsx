@@ -61,7 +61,7 @@ export function ProductTabs({ tabs, products }: ProductTabsProps) {
       className="overflow-hidden bg-white py-16 text-[#26251f] sm:py-20 lg:py-24"
       aria-labelledby="signature-scarves-title"
     >
-      <SiteContainer>
+      <SiteContainer width="full">
         <header className="text-center">
           <h2
             id="signature-scarves-title"

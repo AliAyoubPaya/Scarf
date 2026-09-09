@@ -1,9 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { featuredProducts } from "../lib/catalog/products.ts";
 import { productStory, relatedProducts, productEnquiry } from "../lib/catalog/product-details.ts";
 
-const catalog = featuredProducts.map((product, index) => ({ ...product, fabric: index % 2 ? "Chiffon" : "Modal", shade: "Green" }));
+const catalog = Array.from({ length: 6 }, (_, index) => ({
+  id: `woo-${index + 1}`, source: { provider: "woocommerce", externalId: index + 1 },
+  slug: `test-scarf-${index + 1}`, name: `Test scarf ${index + 1}`, color: "Sage", price: 2500,
+  currency: "PKR", images: [{ src: "https://shop.example.com/scarf.jpg", alt: "Test scarf" }],
+  stockStatus: "in-stock", colorCount: 1, tabs: ["new-in"], fabric: "Modal", shade: "Green",
+}));
 test("related products exclude the current scarf and prefer its fabric without changing the catalog", () => {
   const before = [...catalog];
   const related = relatedProducts(catalog[0], catalog);
@@ -17,6 +21,6 @@ test("all fabric collections have product copy", () => {
   }
 });
 test("enquiry includes the selected product, shade, quantity and link", () => {
-  const draft = productEnquiry(catalog[0], 3, "https://example.com/products/olive-mist-modal-hijab");
-  for (const text of [catalog[0].name, catalog[0].color, "Quantity: 3", "https://example.com/products/olive-mist-modal-hijab"]) assert.ok(draft.includes(text));
+  const draft = productEnquiry(catalog[0], 3, "https://example.com/products/test-scarf-1");
+  for (const text of [catalog[0].name, catalog[0].color, "Quantity: 3", "https://example.com/products/test-scarf-1"]) assert.ok(draft.includes(text));
 });

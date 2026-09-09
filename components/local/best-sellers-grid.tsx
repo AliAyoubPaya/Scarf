@@ -14,7 +14,7 @@ export function BestSellersGrid({ products }: BestSellersGridProps) {
       className="bg-[#fbfaf8] py-16 text-[#26251f] sm:py-20 lg:py-24"
       aria-labelledby="best-sellers-title"
     >
-      <SiteContainer>
+      <SiteContainer width="full">
         <header className="text-center">
           <h2
             id="best-sellers-title"

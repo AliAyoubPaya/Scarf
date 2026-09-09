@@ -19,10 +19,3 @@ export function productOptionHref(product: CatalogProduct, option = selectedProd
   return product.commerce?.type === "variable" && option.wooId !== null
     ? `${path}?variant=${option.wooId}` : path;
 }
-
-// Preview-only relationships. Each entry still owns its own slug, gallery and ID.
-export const demoColorGroups: Record<string, string> = {
-  "catalog-01": "demo-modal", "catalog-05": "demo-modal", "catalog-08": "demo-modal",
-  "catalog-02": "demo-satin", "catalog-06": "demo-satin",
-  "catalog-03": "demo-chiffon", "catalog-09": "demo-chiffon",
-};

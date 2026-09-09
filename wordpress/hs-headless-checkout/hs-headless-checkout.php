@@ -2,7 +2,7 @@
 /**
  * Plugin Name: HS Headless Checkout
  * Description: Short-lived, signed cart-session handoff from the HS storefront to WooCommerce hosted checkout.
- * Version: 0.1.0
+ * Version: 0.2.0
  * Requires PHP: 8.1
  * Requires Plugins: woocommerce
  * WC requires at least: 10.7
@@ -10,6 +10,37 @@
 defined('ABSPATH') || exit;
 
 use Automattic\WooCommerce\StoreApi\Utilities\CartTokenUtils;
+
+function hs_checkout_secret() {
+    if (defined('HS_CHECKOUT_SECRET')) return HS_CHECKOUT_SECRET;
+    $secret = get_option('hs_checkout_secret', '');
+    return is_string($secret) ? $secret : '';
+}
+
+add_action('admin_menu', function () {
+    add_submenu_page('woocommerce', 'Headless checkout', 'Headless checkout', 'manage_woocommerce', 'hs-headless-checkout', 'hs_checkout_settings_page');
+});
+
+function hs_checkout_settings_page() {
+    if (!current_user_can('manage_woocommerce')) return;
+    if (isset($_POST['hs_generate_secret'])) {
+        check_admin_referer('hs_generate_checkout_secret');
+        update_option('hs_checkout_secret', bin2hex(random_bytes(32)), false);
+        echo '<div class="notice notice-success"><p>Checkout secret generated. Copy it to the storefront environment before leaving this page.</p></div>';
+    }
+    $secret = hs_checkout_secret();
+    echo '<div class="wrap"><h1>Headless checkout</h1><p>This secret signs short-lived guest-cart handoffs. Keep it private and use the same value for <code>WOO_CHECKOUT_SECRET</code> in Vercel.</p>';
+    if ($secret) {
+        echo '<label for="hs-checkout-secret"><strong>Checkout secret</strong></label><input id="hs-checkout-secret" class="large-text code" type="text" readonly value="' . esc_attr($secret) . '">';
+        echo '<p class="description">Generating a new value immediately invalidates the previous storefront configuration.</p>';
+    } else {
+        echo '<p><strong>Status:</strong> not configured. The checkout endpoint stays unavailable until a secret is generated.</p>';
+    }
+    echo '<form method="post">';
+    wp_nonce_field('hs_generate_checkout_secret');
+    submit_button($secret ? 'Rotate secret' : 'Generate secret', 'primary', 'hs_generate_secret');
+    echo '</form></div>';
+}
 
 add_action('hs_bridge_cleanup_claim', function ($key) { delete_option($key); });
 function hs_bridge_claim($key) {
@@ -22,12 +53,13 @@ add_action('rest_api_init', function () {
     register_rest_route('hs-store/v1', '/checkout-session', array(
         'methods' => 'POST',
         'permission_callback' => function (WP_REST_Request $request) {
-            if (!defined('HS_CHECKOUT_SECRET') || strlen(HS_CHECKOUT_SECRET) < 32 || strlen($request->get_body()) > 16000) return false;
+            $secret = hs_checkout_secret();
+            if (strlen($secret) < 32 || strlen($request->get_body()) > 16000) return false;
             $signature = $request->get_header('X-HS-Signature');
             $body = $request->get_json_params();
             return is_array($body) && isset($body['issuedAt']) && is_int($body['issuedAt'])
                 && abs(time() - $body['issuedAt']) <= 60
-                && hash_equals(hash_hmac('sha256', $request->get_body(), HS_CHECKOUT_SECRET), $signature);
+                && hash_equals(hash_hmac('sha256', $request->get_body(), $secret), $signature);
         },
         'callback' => function (WP_REST_Request $request) {
             if (!defined('WC_VERSION') || version_compare(WC_VERSION, '10.7', '<') || !class_exists(CartTokenUtils::class)) return new WP_Error('hs_version', 'WooCommerce 10.7 or newer is required.', array('status' => 503));
