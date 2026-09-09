@@ -16,7 +16,8 @@ As of 9 September 2026:
 - WooCommerce 11.1.0 is installed at `https://chocolate-goldfish-879617.hostingersite.com`, using PKR. A read-only catalog API credential has been saved as private Vercel secrets for Production and Preview. Development credentials and remaining integration configuration are pending. An older read-only key was already present and was not revoked.
 - Three approved temporary sample products were imported through WooCommerce's built-in importer: Olive Mist Modal Hijab (ID 19, PKR 2,850), Cocoa Cloud Modal Hijab (ID 20, PKR 2,950), and Soft Pearl Chiffon Hijab (ID 21, PKR 2,450). They use WordPress-hosted sample images and are explicitly described as samples. All are out of stock; the store remains in coming-soon mode. `wordpress/sample-products.csv` is the import source; do not re-import as new products. Use WooCommerce's update-existing option and SKU matching for intentional updates.
 - The local project is linked to the existing Vercel project. A bulk development environment pull was blocked by security review because it exports all development secrets. Do not bypass that restriction; obtain explicit approval before exporting them to ignored `.env.local`.
-- **The WooCommerce → MongoDB → storefront flow is not yet live-verified.** No GitHub push or deployment was performed. The checkout bridge is not installed or staging-tested, and checkout must remain disabled until the checklist below passes.
+- The protected preview flow was verified on 9 September 2026: WooCommerce product IDs 19, 20 and 21 synchronized to MongoDB, and the Vercel preview rendered all three MongoDB-backed products. Git branch `codex/woocommerce-mongo-flow` is pushed. Checkout remains disabled; the checkout bridge is not installed or staging-tested.
+- The GitHub pull request still needs to be created from the pushed branch because the available browser session is not signed in to GitHub. The compare URL is `https://github.com/AliAyoubPaya/Scarf/compare/master...codex/woocommerce-mongo-flow?expand=1`.
 
 ## MongoDB through Vercel
 
@@ -62,6 +63,15 @@ The seed script only upserts the 10 fixture products in **`demo_products`**, wit
 - Each product keeps its own WooCommerce parent ID and MongoDB document. Swatches are actual Next.js links to sibling slugs, with a distinct canonical URL. A variable product may additionally select its own size with `?variant=<Woo variation ID>`; foreign option IDs are ignored. Back/forward, refresh and opening a colour in a new tab use the same product identity.
 - Cart submissions resolve the new product slug and its own option from MongoDB. Colour sibling relationships never substitute a different parent's ID.
 - Local preview has explicit example groups and one non-purchasable option per product. If an older preview catalog has already been seeded, rerun the preview seed with the documented confirmation to replace those demo snapshots.
+
+## What happens after a WordPress product edit
+
+- The storefront never reads product listings directly from WordPress. A protected sync or verified WooCommerce webhook first re-fetches the canonical WooCommerce product, then atomically replaces that product's MongoDB snapshot. The next uncached storefront request reads the updated snapshot.
+- A title, price, stock state, category/tag assignment, colour attribute, colour-group metadata, gallery image URL or image alt-text change appears after that product is synchronized. The sample products remain non-purchasable because they are out of stock and checkout is disabled.
+- Upload a replacement image as new WordPress media and assign its new URL. Replacing the binary behind the same URL can remain stale in browser/CDN image caches.
+- A deleted or hidden product becomes a MongoDB tombstone on a deletion webhook or targeted sync and disappears from storefront catalog reads. Changing `_hs_color_group` changes which separate colour products appear together as swatches.
+- WooCommerce webhooks are not yet registered against production because the new route is only on the preview branch. Until the PR is merged and a stable production deployment exists, run the protected sync manually after WordPress edits. Configure and verify product created/updated/deleted webhooks immediately after production deployment.
+- Long description and short description are retained in WooCommerce but are not currently rendered by the storefront; product-page editorial copy is fabric-based. Add explicit catalog fields before relying on WordPress description edits for visible page copy.
 
 ## Cart and checkout boundaries
 

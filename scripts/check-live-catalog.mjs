@@ -41,7 +41,11 @@ const expectedProducts = [
   "Cocoa Cloud Modal Hijab",
   "Soft Pearl Chiffon Hijab",
 ];
-const storefrontResponse = await fetch(origin, { redirect: "error" });
+const storefrontResponse = await fetch(origin, { redirect: "follow" });
+if (!/^https:\/\/[a-z0-9.-]+\.vercel\.app\/?$/i.test(storefrontResponse.url)) {
+  console.error("Storefront redirected outside the expected Vercel preview origin.");
+  process.exit(1);
+}
 const storefront = await storefrontResponse.text();
 const missing = expectedProducts.filter((name) => !storefront.includes(name));
 
