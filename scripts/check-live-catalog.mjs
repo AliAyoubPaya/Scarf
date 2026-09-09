@@ -13,7 +13,7 @@ if (!secret || secret.length < 32) {
 const syncResponse = await fetch(`${origin}/api/catalog/sync`, {
   method: "POST",
   headers: {
-    authorization: `Bearer ${secret}`,
+    "x-catalog-sync-secret": secret,
     "content-type": "application/json",
   },
   body: JSON.stringify({ page: 1 }),

@@ -4,7 +4,8 @@ import { syncPage, syncProduct } from "@/lib/commerce/sync";
 export const runtime = "nodejs";
 export const maxDuration = 300;
 export async function POST(request: Request) {
-  if ((process.env.CATALOG_SYNC_SECRET || "").length < 32 || !equalSecret(request.headers.get("authorization") || "", `Bearer ${process.env.CATALOG_SYNC_SECRET || ""}`)) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const configuredSecret = process.env.CATALOG_SYNC_SECRET || "";
+  if (configuredSecret.length < 32 || !equalSecret(request.headers.get("x-catalog-sync-secret") || "", configuredSecret)) return Response.json({ error: "Unauthorized" }, { status: 401 });
   try {
     const body = await request.json();
     if (body.productId !== undefined) {
