@@ -1,4 +1,5 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { cookies } from "next/headers";
 import { commerceReady, wooBaseUrl } from "@/lib/commerce/config";
 import { money, type CartSummary } from "@/lib/commerce/cart-types";
@@ -16,7 +17,11 @@ export async function storeCart(action = "", body?: object): Promise<WooCart> {
   const jar = await cookies();
   let token = jar.get(CART_COOKIE)?.value;
   async function call(path: string, data?: object) {
-    const response = await fetch(`${wooBaseUrl()}/wp-json/wc/store/v1/cart${path}`, { method: data ? "POST" : "GET", headers: { "Content-Type": "application/json", ...(token ? { "Cart-Token": token } : {}) }, body: data ? JSON.stringify(data) : undefined, cache: "no-store", redirect: "error", signal: AbortSignal.timeout(15000) });
+    const endpoint = new URL(`/wp-json/wc/store/v1/cart${path}`, wooBaseUrl());
+    // Some managed WordPress hosts cache anonymous REST GETs despite WooCommerce's
+    // no-store response. A unique query key prevents users sharing a stale cart token.
+    if (!data) endpoint.searchParams.set("hs_request", randomUUID());
+    const response = await fetch(endpoint, { method: data ? "POST" : "GET", headers: { "Content-Type": "application/json", "Cache-Control": "no-cache, no-store", Pragma: "no-cache", ...(token ? { "Cart-Token": token } : {}) }, body: data ? JSON.stringify(data) : undefined, cache: "no-store", redirect: "error", signal: AbortSignal.timeout(15000) });
     if (response.status === 401 || response.status === 403) {
       jar.delete(CART_COOKIE);
       throw new CommerceError("Your shopping session expired. Reload your bag before adding again.", 409);
