@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: HS Headless Checkout
- * Description: Short-lived, signed cart-session handoff from the HS storefront to WooCommerce hosted checkout.
- * Version: 0.2.0
+ * Description: WooCommerce bridge and storefront colour-family management for the HS storefront.
+ * Version: 0.3.0
  * Requires PHP: 8.1
  * Requires Plugins: woocommerce
  * WC requires at least: 10.7
@@ -10,6 +10,33 @@
 defined('ABSPATH') || exit;
 
 use Automattic\WooCommerce\StoreApi\Utilities\CartTokenUtils;
+
+// Each storefront colour is a separate product. This field links sibling
+// products into the same colour-swatches row without exposing raw post meta.
+add_action('woocommerce_product_options_general_product_data', function () {
+    woocommerce_wp_text_input(array(
+        'id'            => '_hs_color_group',
+        'label'         => __('Storefront colour group', 'hs-headless-checkout'),
+        'placeholder'   => 'rose-dust-satin',
+        'description'   => __('Use the same value on every separate colour product in this family. Use lowercase letters, numbers and hyphens only.', 'hs-headless-checkout'),
+        'desc_tip'      => true,
+        'wrapper_class' => 'show_if_simple show_if_variable',
+    ));
+});
+
+add_action('woocommerce_admin_process_product_object', function ($product) {
+    if (!isset($_POST['_hs_color_group'])) return;
+    $group = strtolower(sanitize_key(wp_unslash($_POST['_hs_color_group'])));
+    if ($group === '') {
+        $product->delete_meta_data('_hs_color_group');
+        return;
+    }
+    if (!preg_match('/^[a-z0-9][a-z0-9_-]{0,79}$/', $group)) {
+        WC_Admin_Meta_Boxes::add_error(__('Storefront colour group contains unsupported characters.', 'hs-headless-checkout'));
+        return;
+    }
+    $product->update_meta_data('_hs_color_group', $group);
+});
 
 function hs_checkout_secret() {
     if (defined('HS_CHECKOUT_SECRET')) return HS_CHECKOUT_SECRET;

@@ -1,5 +1,4 @@
 import { ArrowUpRight } from "lucide-react";
-import { getImageProps } from "next/image";
 import Link from "next/link";
 
 import { SiteContainer } from "@/components/local/site-container";
@@ -8,41 +7,20 @@ const heroAlt =
   "Woman wearing an ivory and soft pistachio printed scarf in a sunlit stone courtyard";
 
 export function HeroBanner() {
-  const common = {
-    alt: heroAlt,
-    sizes: "100vw",
-    quality: 85,
-  } as const;
-
-  const {
-    props: { srcSet: desktopSrcSet },
-  } = getImageProps({
-    ...common,
-    src: "/images/scarf-hero-desktop.png",
-    width: 1810,
-    height: 869,
-  });
-
-  const {
-    props: { srcSet: mobileSrcSet, ...mobileImageProps },
-  } = getImageProps({
-    ...common,
-    src: "/images/scarf-hero-mobile.png",
-    width: 864,
-    height: 1821,
-  });
-
   return (
     <section
       className="relative isolate h-[calc(100svh-6.65rem)] min-h-[36rem] overflow-hidden bg-[#d8d4c7] sm:h-[calc(100svh-7.25rem)] sm:min-h-[38rem] sm:max-h-[56rem]"
       aria-labelledby="hero-title"
     >
       <picture className="absolute inset-0 block size-full">
-        <source media="(min-width: 640px)" srcSet={desktopSrcSet} />
-        <source media="(max-width: 639px)" srcSet={mobileSrcSet} />
+        <source media="(min-width: 640px)" srcSet="/images/scarf-hero-desktop.png" />
+        <source media="(max-width: 639px)" srcSet="/images/scarf-hero-mobile.png" />
+        {/* Native picture is intentional: these are two different art-directed crops. */}
         <img
-          {...mobileImageProps}
+          src="/images/scarf-hero-desktop.png"
           alt={heroAlt}
+          width={1810}
+          height={869}
           fetchPriority="high"
           className="size-full object-cover object-[52%_center] sm:object-center"
         />

@@ -9,6 +9,9 @@ export const CART_COOKIE = "hs_woo_cart";
 type WooCart = {
   items: { key: string; id: number; name: string; quantity: number; images: { src: string }[]; variation: { attribute: string; value: string }[]; quantity_limits: { minimum: number; maximum: number; editable: boolean }; totals: { line_total: string; currency_code: string; currency_minor_unit: number } }[];
   items_count: number; errors: { message: string }[];
+  needs_payment: boolean;
+  needs_shipping: boolean;
+  payment_methods: string[];
   totals: { total_items: string; total_price: string; currency_code: string; currency_minor_unit: number };
 };
 export class CommerceError extends Error { constructor(message: string, public status = 400) { super(message); } }
@@ -38,5 +41,15 @@ export async function storeCart(action = "", body?: object): Promise<WooCart> {
 }
 export function summarizeCart(cart: WooCart): CartSummary {
   const format = (amount: string) => money(amount, cart.totals.currency_code, cart.totals.currency_minor_unit);
-  return { ready: true, count: cart.items_count, subtotal: format(cart.totals.total_items), total: format(cart.totals.total_price), errors: (cart.errors || []).map((error) => plainText(error.message)), items: cart.items.map((item) => ({ key: item.key, id: item.id, name: plainText(item.name), quantity: item.quantity, image: item.images[0]?.src || null, options: item.variation.map((option) => `${plainText(option.attribute)}: ${plainText(option.value)}`).join(" · "), total: money(item.totals.line_total, item.totals.currency_code, item.totals.currency_minor_unit), minimum: item.quantity_limits.minimum, maximum: Math.min(99, item.quantity_limits.maximum), editable: item.quantity_limits.editable })) };
+  return {
+    ready: true,
+    count: cart.items_count,
+    subtotal: format(cart.totals.total_items),
+    total: format(cart.totals.total_price),
+    errors: (cart.errors || []).map((error) => plainText(error.message)),
+    needsPayment: Boolean(cart.needs_payment),
+    needsShipping: Boolean(cart.needs_shipping),
+    paymentMethods: Array.isArray(cart.payment_methods) ? cart.payment_methods.filter((method) => typeof method === "string") : [],
+    items: cart.items.map((item) => ({ key: item.key, id: item.id, name: plainText(item.name), quantity: item.quantity, image: item.images[0]?.src || null, options: item.variation.map((option) => `${plainText(option.attribute)}: ${plainText(option.value)}`).join(" · "), total: money(item.totals.line_total, item.totals.currency_code, item.totals.currency_minor_unit), minimum: item.quantity_limits.minimum, maximum: Math.min(99, item.quantity_limits.maximum), editable: item.quantity_limits.editable })),
+  };
 }

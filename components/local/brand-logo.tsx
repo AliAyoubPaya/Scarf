@@ -12,7 +12,7 @@ export function BrandLogo({ variant = "header" }: BrandLogoProps) {
 
   return (
     <Link href="/" aria-label="HS by Saman home" className="inline-flex w-fit shrink-0 items-center gap-2 sm:gap-3">
-      <Image
+      {/* <Image
         src="/images/hs-by-saman-logo.png"
         alt=""
         width={1254}
@@ -24,7 +24,8 @@ export function BrandLogo({ variant = "header" }: BrandLogoProps) {
       <span className="flex flex-col gap-1.5 font-heading">
         <span className={cn("font-medium leading-none tracking-[0.03em] text-foreground", isFooter ? "text-2xl sm:text-3xl" : "text-[0.9rem] sm:text-base")}>HS by Saman</span>
         <span className={cn("uppercase tracking-[0.19em] text-brand-gold-ink", isFooter ? "text-[0.58rem]" : "text-[0.47rem]")}>Modesty is the new bold</span>
-      </span>
+      </span> */}
+      BRAND LOGO
     </Link>
   );
 }
