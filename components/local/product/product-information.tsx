@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
   ArrowRight,
+  CircleCheck,
   ChevronDown,
   LockKeyhole,
   Minus,
@@ -89,7 +90,7 @@ export function ProductInformation ({ product, variant, colors, ready }: Props) 
   }
 
   return (
-    <div className='min-w-0 md:pt-4 lg:sticky lg:top-36 lg:self-start [&_button]:disabled:cursor-not-allowed [&_button]:disabled:opacity-45'>
+    <div className='min-w-0 md:pt-4 [&_button]:disabled:cursor-not-allowed [&_button]:disabled:opacity-45'>
       <div className='flex items-center justify-between gap-3'>
         <p className='text-[0.65rem] uppercase tracking-[0.2em] text-brand-gold-ink'>
           HS by Saman / {product.fabric}
@@ -107,12 +108,15 @@ export function ProductInformation ({ product, variant, colors, ready }: Props) 
         {product.name}
       </h1>
       <div
-        className='mt-5 flex flex-wrap items-center gap-x-5 gap-y-2'
+        className='mt-6 flex flex-wrap items-center justify-between gap-4 border-y border-[#e7e0d4] bg-[#f8f5ef]/70 px-4 py-4 sm:px-5'
         aria-live='polite'
       >
-        <p className='font-heading text-2xl'>{price}</p>
-        <span className='flex items-center gap-2 text-xs text-[#71695d]'>
-          <span className='size-1.5 rounded-full bg-current' />
+        <div>
+          <p className='text-[0.62rem] uppercase tracking-[0.16em] text-[#82796a]'>Price</p>
+          <p className='mt-1 font-heading text-[1.65rem] font-medium leading-none tracking-[-0.02em]'>{price}</p>
+        </div>
+        <span className={`inline-flex min-h-9 items-center gap-2 rounded-full border px-3 text-[0.7rem] font-medium ${canBuy ? 'border-[#d9dfcf] bg-[#f3f6ed] text-[#4f6042]' : 'border-[#d8cfc1] bg-white text-[#756c60]'}`}>
+          {canBuy ? <CircleCheck className='size-3.5' strokeWidth={1.6} /> : <span className='size-1.5 rounded-full bg-current' />}
           {soldOut
             ? 'Sold out in this shade'
             : !product.commerce?.synced
@@ -124,7 +128,7 @@ export function ProductInformation ({ product, variant, colors, ready }: Props) 
             : 'In stock'}
         </span>
       </div>
-      <p className='mt-5 text-sm leading-7 text-[#71695d]'>
+      <p className='mt-6 text-sm leading-7 text-[#71695d]'>
         {productStory(product)}
       </p>
       <ProductColorLinks
