@@ -11,21 +11,24 @@ export function BrandLogo({ variant = "header" }: BrandLogoProps) {
   const isFooter = variant === "footer";
 
   return (
-    <Link href="/" aria-label="HS by Saman home" className="inline-flex w-fit shrink-0 items-center gap-2 sm:gap-3">
-      {/* <Image
-        src="/images/hs-by-saman-logo.png"
+    <Link
+      href="/"
+      aria-label="HS by Saman home"
+      className={cn(
+        "relative block shrink-0 overflow-hidden leading-none",
+        isFooter
+          ? "h-18 w-54 sm:h-23 sm:w-68"
+          : "h-16 w-40 min-[22rem]:h-16 min-[22rem]:w-40 lg:h-21 lg:w-62",
+      )}
+    >
+      <Image
+        src={isFooter ? "/images/logo-transparent.png" : "/images/logo-bg-white.png"}
         alt=""
-        width={1254}
-        height={1254}
-        sizes={isFooter ? "112px" : "64px"}
+        fill
+        sizes={isFooter ? "(min-width: 640px) 240px, 216px" : "(min-width: 1024px) 168px, (min-width: 352px) 144px, 132px"}
         preload={!isFooter}
-        className={cn("shrink-0 object-contain mix-blend-multiply", isFooter ? "size-28" : "size-11 min-[22rem]:size-16")}
+        className="scale-[1.11] object-contain"
       />
-      <span className="flex flex-col gap-1.5 font-heading">
-        <span className={cn("font-medium leading-none tracking-[0.03em] text-foreground", isFooter ? "text-2xl sm:text-3xl" : "text-[0.9rem] sm:text-base")}>HS by Saman</span>
-        <span className={cn("uppercase tracking-[0.19em] text-brand-gold-ink", isFooter ? "text-[0.58rem]" : "text-[0.47rem]")}>Modesty is the new bold</span>
-      </span> */}
-      BRAND LOGO
     </Link>
   );
 }

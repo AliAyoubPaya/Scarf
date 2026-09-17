@@ -11,8 +11,8 @@ export function SiteContainer({ width = "contained", className, ...props }: Site
     <div
       data-site-width={width}
       className={cn(
-        "mx-auto w-full min-w-0 px-[var(--site-gutter)]",
-        width === "contained" ? "max-w-[var(--site-content-max)]" : "max-w-none",
+        "mx-auto w-full min-w-0 px-(--site-gutter)",
+        width === "contained" ? "max-w-(--site-content-max)" : "max-w-none",
         className,
       )}
       {...props}

@@ -7,6 +7,13 @@ export async function cartRequest(method = "GET", body?: object): Promise<CartSu
   window.dispatchEvent(new CustomEvent("hs:cart-updated", { detail: result }));
   return result;
 }
+export async function couponRequest(method: "POST" | "DELETE", code: string): Promise<CartSummary> {
+  const response = await fetch("/api/cart/coupon", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code }), cache: "no-store" });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || "The coupon could not be updated.");
+  window.dispatchEvent(new CustomEvent("hs:cart-updated", { detail: result }));
+  return result;
+}
 export type CheckoutDetails = {
   firstName: string; lastName: string; email: string; phone: string;
   address1: string; address2: string; city: string; state: string; postcode: string;

@@ -12,10 +12,10 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-[#e5e0d8] bg-[#f5f2ed] text-[#302a23] [&_a]:focus-visible:outline-2 [&_a]:focus-visible:outline-offset-4 [&_a]:focus-visible:outline-brand-gold-ink [&_button]:focus-visible:outline-2 [&_button]:focus-visible:outline-offset-4 [&_button]:focus-visible:outline-brand-gold-ink">
       <SiteContainer width="full">
-        <div className="flex flex-col items-start justify-between gap-7 border-b border-[#e2dbd2] py-10 sm:flex-row sm:items-center sm:py-12">
-          <div>
+        <div className="flex flex-col items-start justify-between gap-7 border-b border-[#e2dbd2] py-8 sm:flex-row sm:items-center sm:py-9 lg:py-10">
+          <div className="flex flex-col items-start">
             <BrandLogo variant="footer" />
-            <p className="mt-3 text-sm text-[#756a5e]">For every shade of you.</p>
+            {/* <p className="mt-1.5 text-sm text-[#756a5e]">For every shade of you.</p> */}
           </div>
           <div className="flex items-center gap-4">
             <p className="mr-2 text-xs uppercase leading-relaxed tracking-[0.12em] text-[#847566]">A little closer.<br />A little more inspired.</p>

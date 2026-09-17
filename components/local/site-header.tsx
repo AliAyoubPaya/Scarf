@@ -56,7 +56,7 @@ export function SiteHeader() {
         </SiteContainer>
       </div>
 
-      <SiteContainer width="full" className="grid h-[4.65rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center sm:h-20">
+      <SiteContainer width="full" className="grid h-[4.65rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center sm:h-22">
         <div className="flex items-center justify-start lg:hidden">
           <button
             type="button"
@@ -72,8 +72,8 @@ export function SiteHeader() {
           </button>
         </div>
 
-        <div className="hidden justify-self-start lg:block"><BrandLogo /></div>
-        <div className="justify-self-center lg:hidden"><BrandLogo /></div>
+        <div className="hidden min-w-0 justify-self-start lg:block"><BrandLogo /></div>
+        <div className="min-w-0 justify-self-center lg:hidden"><BrandLogo /></div>
 
         <DesktopNavigation activeMenu={desktopMenu} onActiveMenuChange={setDesktopMenu} />
 

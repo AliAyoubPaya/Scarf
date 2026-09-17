@@ -8,11 +8,12 @@ import { plainText } from "@/lib/commerce/normalize-product";
 export const CART_COOKIE = "hs_woo_cart";
 type WooCart = {
   items: { key: string; id: number; name: string; quantity: number; images: { src: string }[]; variation: { attribute: string; value: string }[]; quantity_limits: { minimum: number; maximum: number; editable: boolean }; totals: { line_total: string; currency_code: string; currency_minor_unit: number } }[];
+  coupons: { code: string; totals: { total_discount: string; currency_code: string; currency_minor_unit: number } }[];
   items_count: number; errors: { message: string }[];
   needs_payment: boolean;
   needs_shipping: boolean;
   payment_methods: string[];
-  totals: { total_items: string; total_price: string; currency_code: string; currency_minor_unit: number };
+  totals: { total_items: string; total_discount: string; total_shipping: string; total_tax: string; total_price: string; currency_code: string; currency_minor_unit: number };
 };
 export class CommerceError extends Error { constructor(message: string, public status = 400) { super(message); } }
 export async function storeCart(action = "", body?: object): Promise<WooCart> {
@@ -44,7 +45,12 @@ export function summarizeCart(cart: WooCart): CartSummary {
   return {
     ready: true,
     count: cart.items_count,
+    coupons: (cart.coupons || []).map((coupon) => ({ code: plainText(coupon.code), discount: money(coupon.totals.total_discount, coupon.totals.currency_code, coupon.totals.currency_minor_unit) })),
     subtotal: format(cart.totals.total_items),
+    discount: format(cart.totals.total_discount || "0"),
+    hasDiscount: Number(cart.totals.total_discount || 0) > 0,
+    shipping: format(cart.totals.total_shipping || "0"),
+    tax: format(cart.totals.total_tax || "0"),
     total: format(cart.totals.total_price),
     errors: (cart.errors || []).map((error) => plainText(error.message)),
     needsPayment: Boolean(cart.needs_payment),

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, LockKeyhole, Minus, Plus, ShoppingBag as BagIcon, Trash2 } from "lucide-react";
 import { cartRequest } from "@/lib/commerce/cart-client";
 import type { CartSummary } from "@/lib/commerce/cart-types";
+import { CouponCode } from "@/components/local/cart/coupon-code";
 
 export function ShoppingBag() {
   const router = useRouter();
@@ -30,7 +31,19 @@ export function ShoppingBag() {
     {cart && !cart.items.length ? <div className="my-10 rounded-2xl border border-brand-gold-line bg-white px-5 py-16 text-center"><BagIcon className="mx-auto size-10 text-brand-gold-ink" strokeWidth={1} /><h2 className="mt-6 font-heading text-2xl font-light">A little space for something lovely.</h2><p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#71695d]">{cart.ready ? "Your bag is empty. Explore our scarves and choose the shade that feels like you." : "Our online store is being connected. Explore the collection and preview your favourite colours in the meantime."}</p><Link href="/collections/all" className="mt-7 inline-flex min-h-12 items-center gap-5 rounded bg-brand-gold-ink px-7 text-sm text-white">Explore scarves<ArrowRight className="size-4" /></Link></div> : null}
     {cart?.items.length ? <div className="mt-10 grid gap-10 lg:grid-cols-[1.7fr_1fr]">
       <div className="divide-y divide-brand-gold-line border-y border-brand-gold-line">{cart.items.map((item) => <article key={item.key} className="flex gap-4 py-6 sm:gap-6"><div className="relative aspect-[4/5] w-24 shrink-0 overflow-hidden rounded bg-[#eee8df] sm:w-32">{item.image ? <Image src={item.image} alt={item.name} fill sizes="128px" className="object-cover" /> : <BagIcon className="m-auto mt-10 size-7 text-brand-gold-ink" />}</div><div className="min-w-0 flex-1"><h2 className="font-heading text-base sm:text-lg">{item.name}</h2><p className="mt-2 text-xs leading-5 text-[#71695d]">{item.options}</p><p className="mt-3 text-sm">{item.total}</p><div className="mt-4 flex flex-wrap items-center gap-4"><div className="flex items-center rounded border border-brand-gold-line [&_button]:flex [&_button]:size-10 [&_button]:items-center [&_button]:justify-center"><button type="button" aria-label={`Decrease ${item.name}`} disabled={pending || !item.editable || item.quantity <= item.minimum} onClick={() => change("PATCH", { key: item.key, quantity: item.quantity - 1 })}><Minus className="size-3" /></button><span className="w-7 text-center text-xs">{item.quantity}</span><button type="button" aria-label={`Increase ${item.name}`} disabled={pending || !item.editable || item.quantity >= item.maximum} onClick={() => change("PATCH", { key: item.key, quantity: item.quantity + 1 })}><Plus className="size-3" /></button></div><button type="button" aria-label={`Remove ${item.name}`} disabled={pending} onClick={() => change("DELETE", { key: item.key })} className="flex min-h-10 items-center gap-2 text-xs text-[#71695d]"><Trash2 className="size-3.5" />Remove</button></div></div></article>)}</div>
-      <aside className="self-start rounded-xl bg-[#f1ece2] p-6 sm:p-8"><h2 className="font-heading text-2xl font-light">A lovely choice.</h2><dl className="mt-7 grid grid-cols-2 gap-y-4 text-sm [&_dd]:text-right"><dt>Items subtotal</dt><dd>{cart.subtotal}</dd><dt>Current total</dt><dd>{cart.total}</dd></dl><p className="mt-5 border-t border-brand-gold-line pt-4 text-xs leading-6 text-[#71695d]">Delivery, contact details and available payment methods are confirmed on our HS by Saman checkout.</p>{cart.errors.map((message) => <p key={message} role="alert" className="mt-3 text-sm text-[#8b4541]">{message}</p>)}<button type="button" onClick={proceed} disabled={pending || !!error || !!cart.errors.length} className="mt-6 flex min-h-13 w-full items-center justify-center gap-3 rounded bg-brand-gold-ink px-4 text-sm text-white">Continue to checkout<ArrowRight className="size-4" /></button><p className="mt-4 flex items-center justify-center gap-2 text-xs text-[#71695d]"><LockKeyhole className="size-3.5" />WooCommerce-secured order processing</p></aside>
+      <aside className="self-start rounded-xl bg-[#f1ece2] p-6 sm:p-8">
+        <h2 className="font-heading text-2xl font-light">A lovely choice.</h2>
+        <CouponCode cart={cart} onCartChange={setCart} className="mt-6" />
+        <dl className="mt-7 grid grid-cols-2 gap-y-4 text-sm [&_dd]:text-right">
+          <dt>Items subtotal</dt><dd>{cart.subtotal}</dd>
+          {cart.hasDiscount ? <><dt className="text-[#4e7354]">Coupon discount</dt><dd className="text-[#4e7354]">−{cart.discount}</dd></> : null}
+          <dt className="border-t border-brand-gold-line pt-4 font-medium">Current total</dt><dd className="border-t border-brand-gold-line pt-4 font-medium">{cart.total}</dd>
+        </dl>
+        <p className="mt-5 border-t border-brand-gold-line pt-4 text-xs leading-6 text-[#71695d]">Delivery, contact details and available payment methods are confirmed on our HS by Saman checkout.</p>
+        {cart.errors.map((message) => <p key={message} role="alert" className="mt-3 text-sm text-[#8b4541]">{message}</p>)}
+        <button type="button" onClick={proceed} disabled={pending || !!error || !!cart.errors.length} className="mt-6 flex min-h-13 w-full items-center justify-center gap-3 rounded bg-brand-gold-ink px-4 text-sm text-white">Continue to checkout<ArrowRight className="size-4" /></button>
+        <p className="mt-4 flex items-center justify-center gap-2 text-xs text-[#71695d]"><LockKeyhole className="size-3.5" />WooCommerce-secured order processing</p>
+      </aside>
     </div> : null}
   </div>;
 }

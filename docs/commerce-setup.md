@@ -4,7 +4,11 @@
 
 WooCommerce products and variations → authenticated sync / signed webhooks → MongoDB `products` snapshots → Next.js homepage, collections and product pages. There is no static product fallback.
 
-Selected product option → Next.js `/api/cart` → WooCommerce Store API cart → short-lived checkout handoff → WooCommerce hosted checkout, shipping and payment.
+Selected product option → Next.js `/api/cart` → WooCommerce Store API cart → Next.js `/checkout` → WooCommerce Store API order and payment processing.
+
+After WooCommerce creates an order, the checkout route stores the order ID, order key and guest billing email in a short-lived HTTP-only same-site cookie. Native WooCommerce receipt redirects are replaced with `/order-confirmation/{orderId}`. That server-rendered Next.js page reads the private cookie and requests the verified order from WooCommerce's Store API; the order key and email never appear in the storefront URL. External payment gateways keep their gateway redirect so payment is never skipped. Their configured return URL may need to point back to the storefront after the gateway is added and tested.
+
+Coupon codes are created and managed in **WooCommerce → Marketing → Coupons**. The cart and checkout coupon forms call WooCommerce's native `apply-coupon` / `remove-coupon` Store API endpoints. Because both pages use the same HTTP-only Woo cart session, a coupon applied on the cart page remains applied on checkout and WooCommerce returns the recalculated discount and total.
 
 The storefront never calls WooCommerce to list products. MongoDB mode does not fall back to fixtures on errors. Price/stock shown on the site are snapshots; WooCommerce validates current availability and charges when adding and checking out. Only MongoDB-resolved product/variation IDs are accepted, never client-supplied prices.
 
@@ -17,7 +21,7 @@ As of 9 September 2026:
 - Product content is owned by WooCommerce and copied into MongoDB by sync. No product rows or demo catalog are shipped in the application source. The live check on 9 September 2026 matched all six published WooCommerce products (five in stock, one sold out) on the MongoDB-backed collection page.
 - The local project is linked to the existing Vercel project. A bulk development environment pull was blocked by security review because it exports all development secrets. Do not bypass that restriction; obtain explicit approval before exporting them to ignored `.env.local`.
 - The protected preview flow was verified again on 9 September 2026: WooCommerce product IDs 19, 20, 21, 22, 25 and 26 synchronized to MongoDB and all six names rendered on the protected collection page. Git branch `codex/woocommerce-mongo-flow` contains an older pushed revision; the current local changes are intentionally unpushed pending owner approval.
-- HS Headless Checkout 0.2.0 is installed and active in WordPress. Its endpoint correctly rejects unsigned requests with HTTP 401. Checkout remains disabled until the owner confirms creation of the persistent checkout secret, matching Vercel configuration and end-to-end staging verification.
+- Checkout is implemented natively in Next.js. It does not depend on the legacy cart-handoff endpoint or a checkout bridge secret.
 - The GitHub pull request still needs to be created from the pushed branch because the available browser session is not signed in to GitHub. The compare URL is `https://github.com/AliAyoubPaya/Scarf/compare/master...codex/woocommerce-mongo-flow?expand=1`.
 
 ## MongoDB through Vercel
@@ -39,12 +43,12 @@ node --env-file=.env.local scripts/check-mongodb.mjs
 ## WooCommerce connection
 
 1. Use HTTPS, WooCommerce 10.7+ and store currency PKR. Configure products as simple or variable; external/grouped/private/hidden products are intentionally excluded. Create explicit variation combinations rather than “Any colour/size” wildcard variations. Each colour must be a separate parent product with its own slug, gallery, price and stock. Sizes may be variations inside that colour product. A size without an image inherits that same-colour parent gallery; products without photos use a labelled placeholder. Multi-colour parents are rejected with an actionable sync error, not silently split into fabricated product IDs.
-2. Fill the private values in `.env.example`: URL, REST API credentials, webhook secret, sync secret, and checkout bridge secret. Use different random secrets of at least 32 characters. The REST key needs read access to products, variations and the store's currency setting. Set exact image CDN hostnames in `WOOCOMMERCE_IMAGE_HOSTS` and rebuild.
-3. Upload `wordpress/hs-headless-checkout/` as a WordPress plugin and activate it. Open **WooCommerce → Headless checkout**, generate a private secret, and store the same value as `WOO_CHECKOUT_SECRET` in Vercel. A `HS_CHECKOUT_SECRET` constant in private `wp-config.php` remains supported and takes precedence. Do not commit the value. The plugin uses an HMAC-authenticated endpoint, signed request age checks and an expiring single-use transfer handle. No payment data or API credentials are put into the URL.
+2. Fill the private values in `.env.example`: URL, REST API credentials, webhook secret and sync secret. Use different random secrets of at least 32 characters. The REST key needs read access to products, variations and the store's currency setting. Set exact image CDN hostnames in `WOOCOMMERCE_IMAGE_HOSTS` and rebuild.
+3. Enable at least one WooCommerce payment method that supports the Store API. Cash on Delivery and direct bank transfer work without collecting card data in Next.js. Card gateways still require their normal WooCommerce gateway extension and gateway-specific tokenization; raw card numbers must never be sent to this application.
 4. Run a protected initial sync: `POST /api/catalog/sync`, header `x-catalog-sync-secret: <CATALOG_SYNC_SECRET>`, JSON `{ "page": 1 }`. A dedicated header avoids collisions with Vercel deployment authentication. Follow each returned `nextPage` until null. Batches are small to fit serverless limits; individual products with many variations may require a longer worker execution window. For targeted repair use `{ "productId": 123 }`. Repeating a product sync replaces the snapshot safely.
 5. Add WooCommerce webhooks for product created/updated/deleted (and restored if configured), pointing to `https://YOUR-STOREFRONT/api/woocommerce/webhook`, using `WOOCOMMERCE_WEBHOOK_SECRET`. Invalid signatures are rejected. Canonical parent data is re-fetched before storing, preventing stale payload replay. Configure parent update delivery for variation-only and stock changes. A Woo deletion marks the Mongo record `deletion-pending` and preserves its catalog snapshot on the website. Removal requires an authenticated admin call to `POST /api/catalog/sync` with `{ "productId": 123, "approveRemoval": true }`; approval archives the last snapshot and removes it from storefront reads without physically deleting the Mongo document.
 6. Fabric classification uses category/tag slugs `modal`, `chiffon`, `silk`, `satin`, `jersey`, `georgette`; unmatched products are `Other`. Homepage tab assignment uses `new-in`, `best-sellers`, `occasion` slugs. Extend taxonomy intentionally for the actual store rather than guessing material from names.
-7. Set `WOO_CHECKOUT_ENABLED=true` only after the checkout bridge and staging checklist below pass.
+7. Verify the Store API returns the enabled gateway under `payment_methods`, then complete a staging order through `/checkout`.
 
 ## Separate colour products
 
@@ -65,9 +69,9 @@ node --env-file=.env.local scripts/check-mongodb.mjs
 ## Cart and checkout boundaries
 
 - Woo cart bearer tokens stay in an HttpOnly, same-site cookie. Browser-facing responses contain only the cart summary, not addresses, payment data or API secrets.
-- Mutations require same-origin requests. Quantities are bounded and WooCommerce enforces stock/sold-individually rules. Pending UI state prevents double clicks; a failed Buy now handoff can be retried without adding the same selection again. After an uncertain network mutation, refresh the bag before retrying.
-- The checkout plugin adopts the existing **guest** Store API session into the browser's WooCommerce cookie. It does not recreate the cart with arbitrary prices or manufacture orders. WooCommerce remains the owner through checkout. Authenticated WordPress sessions cannot be transferred from a client token. If WooCommerce migrates a guest session after login, the headless token may expire; the storefront asks the visitor to refresh.
-- Exclude `/wp-json/wc/store/*`, `/wp-json/hs-store/*`, checkout and requests containing `hs_checkout` from WordPress/CDN caching. Redact handoff handles and cookies from analytics/logs. Keep WordPress cron enabled for expired replay-claim cleanup.
+- Mutations require same-origin requests. Quantities are bounded and WooCommerce enforces stock/sold-individually rules. Pending UI state prevents double clicks; a failed checkout request can be retried without adding the same selection again. After an uncertain network mutation, refresh the bag before retrying.
+- The Next.js server keeps the WooCommerce `Cart-Token` in an HTTP-only cookie. The browser never receives WooCommerce API credentials, and WooCommerce revalidates prices, stock, shipping and totals before creating the order.
+- Exclude `/wp-json/wc/store/*` from WordPress/CDN caching. Do not log cart tokens or checkout request bodies.
 - Configure rate limits at Vercel/WAF and WooCommerce for public cart endpoints before launch. These are not bypassed or disabled by the code.
 
 ## Required staging acceptance tests
@@ -78,7 +82,7 @@ Not possible without the real services; do not treat passing unit tests as proof
 - Import simple/variable product, edit colour photo/price/stock, delete and restore, retry out-of-order/duplicate webhooks.
 - Exact selected variation appears in Woo cart; sold-out and changed prices are handled by Woo.
 - Refresh and two separate browsers retain isolated carts. Quantity/remove actions, expired token recovery, network failure and checkout retry do not silently duplicate items.
-- Handoff works with guest and existing Woo cookies; rejects expired/reused/tampered handles. Hosted checkout shows the same variations and quantities.
+- Next.js checkout shows the same WooCommerce cart variations and quantities, rejects stale totals, and creates the order only after WooCommerce revalidates the cart.
 - Test every configured payment method in sandbox, shipping/taxes, declined payment, return/back navigation and completed-order cart clearing. Do not charge a real payment during testing without explicit authorization.
 - Desktop and mobile, keyboard colour-link and size-option selection, image reset/zoom, visible errors and no horizontal overflow.
 
